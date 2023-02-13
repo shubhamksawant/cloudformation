@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  Region:
+    Type: String
+    Default: us-east-1
+    AllowedValues:
+      - ap-northeast-1
+      - ap-southeast-1
+      - ap-southeast-2
+      - ca-central-1
+      - eu-central-1
+      - eu-west-1
+      - eu-west-2
+      - eu-west-3
+      - sa-east-1
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-west-2
+    Description: The AWS region in which to create the S3 bucket.
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+
+    Properties:
+      BucketName: fusionalertbucket
+
+      VersioningConfiguration:
+        Status: Enabled
+
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'aws:kms'
+              KMSMasterKeyID: KMS-KEY-ARN
+
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+      Tags:
+       - Key: Key1
+         Value: Value1
+       - Key: Key2
+         Value: Value2
+
+    DeletionPolicy: Retain
+      
+Outputs:
+
+  Region:
+    Description: The region of the S3 bucket
+    Value: !Ref Region
