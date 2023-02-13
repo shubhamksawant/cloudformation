@@ -1,0 +1,46 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:  
+  MyDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    
+    Properties:
+      TableName: MyDynamoDBTable
+
+      AttributeDefinitions:
+        - AttributeName: ref_event_uid
+          AttributeType: N
+        # - AttributeName: timestamp
+        #   AttributeType: N
+        
+# S - the attribute is of type String
+# N - the attribute is of type Number
+# B - the attribute is of type Binary
+
+      KeySchema:
+      # HASH - partition key
+        - AttributeName: ref_event_uid
+          KeyType: HASH
+        #   # RANGE - sort key
+        # - AttributeName: timestamp
+        #   KeyType: RANGE
+      
+      # ProvisionedThroughput:
+      #   ReadCapacityUnits: 1
+      #   WriteCapacityUnits: 1
+      
+      BillingMode: PAY_PER_REQUEST
+
+      SSESpecification:
+        SSEEnabled: true
+
+      Tags:
+        - Key: "Key1"
+          Value: "Value1"
+        - Key: "Key2"
+          Value: "Value2"
+Outputs:
+  Employee:
+    Description: Table Created using this template.
+    Value: !Ref MyDynamoDBTable
