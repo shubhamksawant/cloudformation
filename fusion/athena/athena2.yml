@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  # MyS3Bucket:
+  #   Type: AWS::S3::Bucket
+
+  MyGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      DatabaseInput:
+        Name: amazon_security_lake_table_us_east_1
+        Description: "Glue beats tape"
+      CatalogId: !Ref AWS::AccountId
+
+  MyGlueTable:
+    Type: AWS::Glue::Table
+    Properties:
+      DatabaseName: !Ref MyGlueDatabase
+      CatalogId: !Ref AWS::AccountId
+      TableInput:
+        Name: amazon_security_lake_table_us_east_1_cloud_trail
+        Parameters: { "partition_filtering.enabled" : "true" }
+        StorageDescriptor:
+          Location: "s3://aws-security-data-lake-us-east-1-e5e8ldzcqonomyqdpkzcbip9qkxhd8/aws/CLOUD_TRAIL/"
+          InputFormat: "org.apache.hadoop.mapred.TextInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+          SerdeInfo:
+            # Parameters: { "separatorChar" : "," }
+            SerializationLibrary: "org.apache.hadoop.hive.serde2.OpenCSVSerde"
+          StoredAsSubDirectories: false
+          Columns:
+            - Name: metadata
+              Type: struct
+            - Name: time
+              Type: bigint
+            - Name: cloud
+              Type: struct
+            - Name: api
+              Type: struct
+            - Name: ref_event_uid
+              Type: string
+            - Name: src_endpoint
+              Type: struct
+            - Name: resources
+              Type: array
+            - Name: identity
+              Type: struct
+            - Name: http_request
+              Type: struct
+            - Name: class_name
+              Type: string
+            - Name: class_uid
+              Type: int
+            - Name: category_name
+              Type: string
+            - Name: category_uid
+              Type: int
+            - Name: severity_id
+              Type: int
+            - Name: severity
+              Type: string
+            - Name: activity_name
+              Type: string
+            - Name: activity_id
+              Type: int
+            - Name: type_uid
+              Type: int
+            - Name: type_name
+              Type: string
+            - Name: unmapped
+              Type: map
