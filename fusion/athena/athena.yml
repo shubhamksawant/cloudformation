@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  # MyS3Bucket:
+  #   Type: AWS::S3::Bucket
+
+  MyGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      DatabaseInput:
+        Name: my-glue-database
+        Description: "Glue beats tape"
+      CatalogId: !Ref AWS::AccountId
+
+  MyGlueTable:
+    Type: AWS::Glue::Table
+    Properties:
+      DatabaseName: !Ref MyGlueDatabase
+      CatalogId: !Ref AWS::AccountId
+      TableInput:
+        Name: my-glue-table
+        Parameters: { "classification" : "csv" }
+        StorageDescriptor:
+          Location: "s3://fusionalertbucket}/"
+          InputFormat: "org.apache.hadoop.mapred.TextInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+          SerdeInfo:
+            Parameters: { "separatorChar" : "," }
+            SerializationLibrary: "org.apache.hadoop.hive.serde2.OpenCSVSerde"
+          StoredAsSubDirectories: false
+          Columns:
+            - Name: column0
+              Type: string
+            - Name: column1
+              Type: string
